@@ -1,0 +1,40 @@
+import pandas as pd
+data = pd.read_excel("Book2.xlsx")
+
+data = data.loc[:,~data.columns.str.contains("Unnamed")]
+
+data = data.drop("Student",axis=1)
+data["Eye_Strain"] = data["Eye_Strain"].map({"yes":1,"no":0})
+data["Headache"] = data["Headache"].map({"yes":1,"no":0})
+data["Harmful"] = data["Harmful"].map({"yes":1,"no":0})
+
+X= data.drop("Harmful",axis=1)
+y=data["Harmful"]
+
+
+from pandas.core.tools.datetimes import Scalar
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+X_train,X_test,y_train,y_test=train_test_split(
+    X,y,test_size=0.2,random_state=42,stratify=y
+)
+Scalar=StandardScaler()
+X_train=Scalar.fit_transform(X_train)
+X_test=Scalar.transform(X_test)
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(X_train_cleaned,y_train)
+y_pred=model.predict(X_test_cleaned)
+
+from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=5,
+    random_state=42
+)
+
+rf.fit(X_train, y_train)
+
+print("RF Accuracy:", rf.score(X_test, y_test)*100)
+
